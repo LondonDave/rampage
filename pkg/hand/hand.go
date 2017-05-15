@@ -2,10 +2,8 @@ package hand
 
 import (
 	"crypto/rand"
-	"fmt"
 	"log"
 	"math/big"
-	"strconv"
 )
 
 func cardName(card int) string {
@@ -236,18 +234,4 @@ func evaluate(hole []int, board []int) (evaluation int, mask []int) {
 		}
 	}
 	return evaluation, mask
-}
-
-func main() {
-	for n := 0; n < 1000000; n++ {
-		cards := shuffle(17)
-		for i := 0; i < 12; i = i + 2 {
-			for i := 12; i < 17; i++ {
-				fmt.Print(cardName(cards[i]), "  ")
-			}
-			fmt.Print(cardName(cards[i]), "  ", cardName(cards[i+1]), "    ")
-			handValue, mask := evaluate(cards[i:i+2], cards[12:17])
-			fmt.Println(strconv.FormatInt(int64(handValue), 16), mask)
-		}
-	}
 }
