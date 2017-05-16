@@ -6,7 +6,7 @@ import (
 	"math/big"
 )
 
-func CardName(card int) string {
+func cardName(card int) string {
 	suitName := "chds"
 	rankName := "A23456789TJQK"
 	suit := card / 13
@@ -14,7 +14,7 @@ func CardName(card int) string {
 	return rankName[rank:rank+1] + suitName[suit:suit+1]
 }
 
-func Shuffle(numCards int) []int {
+func shuffle(numCards int) []int {
 
 	deck := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
 		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
@@ -25,7 +25,7 @@ func Shuffle(numCards int) []int {
 	for i := 0; i < numCards; i++ {
 		r, err := rand.Int(rand.Reader, big.NewInt(52-int64(i)))
 		if err != nil {
-			log.Fatalf("error:", err)
+			log.Fatalf("error:%s", err)
 		}
 		j := i + int(r.Int64())
 		deck[i], deck[j] = deck[j], deck[i]
@@ -35,7 +35,7 @@ func Shuffle(numCards int) []int {
 
 }
 
-func Evaluate(hole []int, board []int) (evaluation int, mask []int) {
+func evaluate(hole []int, board []int) (evaluation int, mask []int) {
 	var suits [4]int
 	var ranks [14]int
 	var order [53]int

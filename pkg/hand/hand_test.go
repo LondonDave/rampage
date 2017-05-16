@@ -59,7 +59,7 @@ func TestEvaluate(t *testing.T) {
 	}
 	for _, test := range tests {
 
-		value, mask := Evaluate(cardValue(test.cards[0:4]), cardValue(test.cards[4:]))
+		value, mask := evaluate(cardValue(test.cards[0:4]), cardValue(test.cards[4:]))
 
 		if value != test.value {
 			t.Errorf("%s\t%x\t%x\t%v\t%v", test.cards, test.value, value, test.mask, mask)
