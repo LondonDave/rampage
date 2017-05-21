@@ -1,6 +1,9 @@
 package hand
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func equal(x, y []int) bool {
 	if len(x) != len(y) {
@@ -12,33 +15,6 @@ func equal(x, y []int) bool {
 		}
 	}
 	return true
-}
-
-func cardValue(cards string) []int {
-	s := []int{}
-	var suit, rank int
-	suitName := "chds"
-	rankName := "A23456789TJQK"
-
-	for p := 0; p < len(cards); p = p + 2 {
-
-		for i := 0; i < 13; i++ {
-			if cards[p] == rankName[i] {
-				rank = i
-				break
-			}
-		}
-
-		for i := 0; i < 4; i++ {
-			if cards[p+1] == suitName[i] {
-				suit = i
-				break
-			}
-		}
-
-		s = append(s, suit*13+rank)
-	}
-	return s
 }
 
 func TestEvaluate(t *testing.T) {
@@ -59,13 +35,19 @@ func TestEvaluate(t *testing.T) {
 	}
 	for _, test := range tests {
 
-		value, mask := evaluate(cardValue(test.cards[0:4]), cardValue(test.cards[4:]))
+		c := evaluate(cardValue(test.cards[0:4]), cardValue(test.cards[4:]))
 
-		if value != test.value {
-			t.Errorf("%s\t%x\t%x\t%v\t%v", test.cards, test.value, value, test.mask, mask)
+		if c.value != test.value {
+			t.Errorf("%s\t%x\t%x\t%v\t%v", test.cards, test.value, c.value, test.mask, c.mask)
 		}
-		if !equal(mask, test.mask) {
-			t.Errorf("%s\t%x\t%x\t%v\t%v", test.cards, test.value, value, test.mask, mask)
+		if !equal(c.mask, test.mask) {
+			t.Errorf("%s\t%x\t%x\t%v\t%v", test.cards, test.value, c.value, test.mask, c.mask)
 		}
 	}
+}
+
+func TestNew(t *testing.T) {
+	h := *newHand(1234, 1)
+	fmt.Println(h)
+	fmt.Println(h.player[2].stack)
 }

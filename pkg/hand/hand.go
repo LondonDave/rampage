@@ -6,6 +6,63 @@ import (
 	"math/big"
 )
 
+type Hand struct {
+	id           int
+	round        int
+	smallBlind   int
+	currentBuyIn int
+	pot          int
+	minimumRaise int
+	dealer       int
+	inAction     int
+	player       []Player
+	board        []int
+	seq          int
+	eor          int
+}
+
+type status int
+
+const (
+	folded status = iota
+	active
+	prefolded
+)
+
+type Player struct {
+	name   string
+	status status
+	stack  int
+	bet    int
+	Cards
+}
+
+type Cards struct {
+	hole  []int
+	value int
+	mask  []int
+}
+
+func newHand(id int, smallBlind int) *Hand {
+	deck := shuffle(17)
+
+	h := Hand{
+		id:         id,
+		smallBlind: smallBlind,
+		board:      deck[0:5],
+		player: []Player{
+			Player{"", 0, 0, 0, evaluate(deck[5:7], deck[0:5])},
+			Player{"", 0, 0, 0, evaluate(deck[7:9], deck[0:5])},
+			Player{"", 0, 0, 0, evaluate(deck[9:11], deck[0:5])},
+			Player{"", 0, 0, 0, evaluate(deck[11:13], deck[0:5])},
+			Player{"", 0, 0, 0, evaluate(deck[13:15], deck[0:5])},
+			Player{"", 0, 0, 0, evaluate(deck[15:17], deck[0:5])},
+		},
+	}
+
+	return &h
+}
+
 func cardName(card int) string {
 	suitName := "chds"
 	rankName := "A23456789TJQK"
@@ -14,9 +71,36 @@ func cardName(card int) string {
 	return rankName[rank:rank+1] + suitName[suit:suit+1]
 }
 
+func cardValue(cards string) []int {
+	s := []int{}
+	var suit, rank int
+	suitName := "chds"
+	rankName := "A23456789TJQK"
+
+	for p := 0; p < len(cards); p = p + 2 {
+
+		for i := 0; i < 13; i++ {
+			if cards[p] == rankName[i] {
+				rank = i
+				break
+			}
+		}
+
+		for i := 0; i < 4; i++ {
+			if cards[p+1] == suitName[i] {
+				suit = i
+				break
+			}
+		}
+
+		s = append(s, suit*13+rank)
+	}
+	return s
+}
+
 func shuffle(numCards int) []int {
 
-	deck := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+	deck := [52]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
 		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
 		26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
 		39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
@@ -35,12 +119,14 @@ func shuffle(numCards int) []int {
 
 }
 
-func evaluate(hole []int, board []int) (evaluation int, mask []int) {
+func evaluate(hole []int, board []int) Cards {
 	var suits [4]int
 	var ranks [14]int
 	var order [53]int
 	var highCard [7]int
 	var flushCard [13]int
+	var evaluation int
+	var mask []int
 
 	hand := append(append(board, hole[0]), hole[1])
 
@@ -233,5 +319,5 @@ func evaluate(hole []int, board []int) (evaluation int, mask []int) {
 			}
 		}
 	}
-	return evaluation, mask
+	return Cards{hole, evaluation, mask}
 }
