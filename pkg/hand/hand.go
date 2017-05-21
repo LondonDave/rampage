@@ -1,3 +1,4 @@
+// Hand contains the game logic for poker rampage
 package hand
 
 import (
