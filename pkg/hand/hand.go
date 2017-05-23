@@ -18,7 +18,7 @@ type Hand struct {
 	inAction     int
 	player       []Player
 	board        []int
-	seq          int
+	Seq          int
 	eor          int
 }
 
@@ -44,7 +44,7 @@ type Cards struct {
 	mask  []int
 }
 
-func newHand(id int, smallBlind int) *Hand {
+func NewHand(id int, smallBlind int) *Hand {
 	deck := shuffle(17)
 
 	h := Hand{
@@ -62,6 +62,10 @@ func newHand(id int, smallBlind int) *Hand {
 	}
 
 	return &h
+}
+
+func (h Hand) IncrementSeq() {
+	h.Seq++
 }
 
 func cardName(card int) string {

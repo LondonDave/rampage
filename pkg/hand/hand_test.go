@@ -47,7 +47,7 @@ func TestEvaluate(t *testing.T) {
 }
 
 func TestNew(t *testing.T) {
-	h := *newHand(1234, 1)
+	h := *NewHand(1234, 1)
 	fmt.Println(h)
-	fmt.Println(h.player[2].stack)
+	fmt.Println(h.player[0].mask)
 }
