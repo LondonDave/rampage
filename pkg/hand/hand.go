@@ -8,50 +8,50 @@ import (
 )
 
 type Hand struct {
-	id           int
-	round        int
-	smallBlind   int
-	currentBuyIn int
-	pot          int
-	minimumRaise int
-	dealer       int
-	inAction     int
-	player       []Player
-	board        []int
+	Id           int
+	Round        int
+	SmallBlind   int
+	CurrentBuyIn int
+	Pot          int
+	MinimumRaise int
+	Dealer       int
+	InAction     int
+	Player       []Player
+	Board        []int
 	Seq          int
-	eor          int
+	Eor          int
 }
 
-type status int
+type Status int
 
 const (
-	folded status = iota
+	folded Status = iota
 	active
 	prefolded
 )
 
 type Player struct {
-	name   string
-	status status
-	stack  int
-	bet    int
+	Name   string
+	Status Status
+	Stack  int
+	Bet    int
 	Cards
 }
 
 type Cards struct {
-	hole  []int
-	value int
-	mask  []int
+	Hole  []int
+	Value int
+	Mask  []int
 }
 
 func NewHand(id int, smallBlind int) *Hand {
 	deck := shuffle(17)
 
 	h := Hand{
-		id:         id,
-		smallBlind: smallBlind,
-		board:      deck[0:5],
-		player: []Player{
+		Id:         id,
+		SmallBlind: smallBlind,
+		Board:      deck[0:5],
+		Player: []Player{
 			Player{"", 0, 0, 0, evaluate(deck[5:7], deck[0:5])},
 			Player{"", 0, 0, 0, evaluate(deck[7:9], deck[0:5])},
 			Player{"", 0, 0, 0, evaluate(deck[9:11], deck[0:5])},
@@ -62,10 +62,6 @@ func NewHand(id int, smallBlind int) *Hand {
 	}
 
 	return &h
-}
-
-func (h Hand) IncrementSeq() {
-	h.Seq++
 }
 
 func cardName(card int) string {

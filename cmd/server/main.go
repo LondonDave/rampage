@@ -17,7 +17,7 @@ func main() {
 		h[i] = *hand.NewHand(i, 1)
 	}
 
-	fmt.Printf("%#v\n", h)
+	fmt.Printf("ORIGINAL   %#v\n", h)
 
 	file, err := os.Create("filetest_1")
 	encoder := gob.NewEncoder(file)
@@ -25,15 +25,16 @@ func main() {
 
 	rand.Seed(42)
 	var j int
+	var hup map[int]hand.Hand
 	for i := 0; i < 1; i++ {
-		j = rand.Intn(10)
-		j = 1
+		// j = rand.Intn(10)
+		j = 0
 		h[j].IncrementSeq()
 		hup := make(map[int]hand.Hand)
 		hup[j] = h[j]
 		encoder.Encode(hup)
 	}
-	fmt.Printf("%#v\n", h)
+	fmt.Printf("UPDATE    %#v\n", hup)
 	file.Close()
 
 	file, err = os.Open("filetest_1")
@@ -44,9 +45,10 @@ func main() {
 	for {
 		err = decoder.Decode(&decodedMap)
 		if err != nil {
+			fmt.Printf("DECODED   %#v\n", decodedMap)
 			panic(err)
 		}
-		fmt.Printf("%#v\n", decodedMap)
+		// fmt.Printf("%#v\n", decodedMap)
 	}
 	file.Close()
 }

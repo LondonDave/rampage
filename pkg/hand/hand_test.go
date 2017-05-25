@@ -1,7 +1,9 @@
 package hand
 
 import (
+	"encoding/gob"
 	"fmt"
+	"os"
 	"testing"
 )
 
@@ -19,9 +21,9 @@ func equal(x, y []int) bool {
 
 func TestEvaluate(t *testing.T) {
 	var tests = []struct {
-		cards string
-		value int
-		mask  []int
+		Cards string
+		Value int
+		Mask  []int
 	}{
 		{"AdAsQcJd5cKhTh", 0x5edcba, []int{1, 1, 0, 1, 1, 1, 0}},
 		{"AdAsQcJd5c4hTh", 0x2eecba, []int{1, 1, 0, 0, 1, 1, 1}},
@@ -35,19 +37,56 @@ func TestEvaluate(t *testing.T) {
 	}
 	for _, test := range tests {
 
-		c := evaluate(cardValue(test.cards[0:4]), cardValue(test.cards[4:]))
+		c := evaluate(cardValue(test.Cards[0:4]), cardValue(test.Cards[4:]))
 
-		if c.value != test.value {
-			t.Errorf("%s\t%x\t%x\t%v\t%v", test.cards, test.value, c.value, test.mask, c.mask)
+		if c.Value != test.Value {
+			t.Errorf("%s\t%x\t%x\t%v\t%v", test.Cards, test.Value, c.Value, test.Mask, c.Mask)
 		}
-		if !equal(c.mask, test.mask) {
-			t.Errorf("%s\t%x\t%x\t%v\t%v", test.cards, test.value, c.value, test.mask, c.mask)
+		if !equal(c.Mask, test.Mask) {
+			t.Errorf("%s\t%x\t%x\t%v\t%v", test.Cards, test.Value, c.Value, test.Mask, c.Mask)
 		}
 	}
 }
 
-func TestNew(t *testing.T) {
-	h := *NewHand(1234, 1)
-	fmt.Println(h)
-	fmt.Println(h.player[0].mask)
+// func TestNew(t *testing.T) {
+// h := *NewHand(1234, 1)
+// fmt.Println(h)
+// fmt.Println(h.player[0].Mask)
+// }
+
+func TestPersistence(t *testing.T) {
+	h := make(map[int]Hand)
+
+	for i := 1000; i < 11000; i++ {
+		h[i] = *NewHand(i, 1)
+	}
+
+	// fmt.Printf("ORIGINAL   %#v\n", h)
+
+	file, err := os.Create("filetest_1")
+	encoder := gob.NewEncoder(file)
+	encoder.Encode(h)
+
+	huphand := h[1001]
+	huphand.Seq++
+	hup := make(map[int]Hand)
+	hup[1001] = huphand
+	encoder.Encode(hup)
+	fmt.Printf("UPDATE    %#v\n", hup)
+	file.Close()
+
+	file, err = os.Open("filetest_1")
+
+	var decodedMap map[int]Hand
+	decoder := gob.NewDecoder(file)
+
+	for {
+		err = decoder.Decode(&decodedMap)
+		if err != nil {
+			// fmt.Printf("DECODED   %#v\n", decodedMap)
+			panic(err)
+		}
+		// fmt.Printf("%#v\n", decodedMap)
+	}
+	file.Close()
 }
