@@ -3,8 +3,10 @@ package hand
 import (
 	"encoding/gob"
 	"fmt"
+	"io"
 	"os"
 	"testing"
+	"time"
 )
 
 func equal(x, y []int) bool {
@@ -57,36 +59,124 @@ func TestEvaluate(t *testing.T) {
 func TestPersistence(t *testing.T) {
 	h := make(map[int]Hand)
 
-	for i := 1000; i < 11000; i++ {
+	for i := 1000; i < 1010; i++ {
 		h[i] = *NewHand(i, 1)
 	}
 
-	// fmt.Printf("ORIGINAL   %#v\n", h)
-
 	file, err := os.Create("filetest_1")
+	if err != nil {
+		panic(err)
+	}
 	encoder := gob.NewEncoder(file)
 	encoder.Encode(h)
 
-	huphand := h[1001]
-	huphand.Seq++
-	hup := make(map[int]Hand)
-	hup[1001] = huphand
-	encoder.Encode(hup)
-	fmt.Printf("UPDATE    %#v\n", hup)
+	hu := h[1001]
+	hu.Seq++
+	hu.Player[0].Name = "Dave"
+	h[1001] = hu
+
+	update := make(map[int]Hand)
+	update[1001] = hu
+	encoder.Encode(update)
+
 	file.Close()
 
 	file, err = os.Open("filetest_1")
+	if err != nil {
+		panic(err)
+	}
 
 	var decodedMap map[int]Hand
 	decoder := gob.NewDecoder(file)
 
 	for {
 		err = decoder.Decode(&decodedMap)
+		if err == io.EOF {
+			break
+		}
 		if err != nil {
-			// fmt.Printf("DECODED   %#v\n", decodedMap)
 			panic(err)
 		}
-		// fmt.Printf("%#v\n", decodedMap)
 	}
 	file.Close()
+	for index := 1000; index < 1010; index++ {
+
+		if h[index].Player[0].Name != decodedMap[index].Player[0].Name {
+			t.Errorf("Name %s\t%s", h[index].Player[0].Name, decodedMap[index].Player[0].Name)
+		}
+		if h[index].Seq != decodedMap[index].Seq {
+			t.Errorf("Seq %v\t%v", h[index].Seq, decodedMap[index].Seq)
+		}
+	}
+}
+
+func TestPersistenceTiming(t *testing.T) {
+	var start time.Time
+	var secs float64
+
+	h := make(map[int]Hand)
+
+	for i := 1000; i < 1000+1000; i++ {
+		h[i] = *NewHand(i, 1)
+	}
+
+	start = time.Now()
+
+	file, err := os.Create("filetest_2")
+	if err != nil {
+		panic(err)
+	}
+	encoder := gob.NewEncoder(file)
+	encoder.Encode(h)
+
+	secs = time.Since(start).Seconds()
+	fmt.Printf("Write %.3fs\n", secs)
+
+	hu := h[1000]
+	hu.Seq++
+	hu.Player[0].Name = "Dave"
+	h[1000] = hu
+
+	update := make(map[int]Hand)
+	update[1000] = hu
+	encoder.Encode(update)
+
+	start = time.Now()
+
+	file.Sync()
+
+	secs = time.Since(start).Seconds()
+	fmt.Printf("Sync %.5fs\n", secs)
+
+	start = time.Now()
+
+	file.Close()
+
+	secs = time.Since(start).Seconds()
+	fmt.Printf("Close %.5fs\n", secs)
+
+	start = time.Now()
+
+	file, err = os.Open("filetest_2")
+	if err != nil {
+		panic(err)
+	}
+
+	var decodedMap map[int]Hand
+	decoder := gob.NewDecoder(file)
+
+	for {
+		err = decoder.Decode(&decodedMap)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			panic(err)
+		}
+	}
+	file.Close()
+
+	secs = time.Since(start).Seconds()
+	fmt.Printf("Read %.3fs\n", secs)
+
 }

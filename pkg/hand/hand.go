@@ -1,4 +1,4 @@
-// Hand contains the poker table game logic for poker rampage
+//Package hand contains the poker table game logic for poker rampage
 package hand
 
 import (
@@ -7,8 +7,9 @@ import (
 	"math/big"
 )
 
+//Hand holds state data for a poker hand
 type Hand struct {
-	Id           int
+	ID           int
 	Round        int
 	SmallBlind   int
 	CurrentBuyIn int
@@ -48,17 +49,26 @@ func NewHand(id int, smallBlind int) *Hand {
 	deck := shuffle(17)
 
 	h := Hand{
-		Id:         id,
+		ID:         id,
 		SmallBlind: smallBlind,
 		Board:      deck[0:5],
 		Player: []Player{
-			Player{"", 0, 0, 0, evaluate(deck[5:7], deck[0:5])},
-			Player{"", 0, 0, 0, evaluate(deck[7:9], deck[0:5])},
-			Player{"", 0, 0, 0, evaluate(deck[9:11], deck[0:5])},
-			Player{"", 0, 0, 0, evaluate(deck[11:13], deck[0:5])},
-			Player{"", 0, 0, 0, evaluate(deck[13:15], deck[0:5])},
-			Player{"", 0, 0, 0, evaluate(deck[15:17], deck[0:5])},
+			Player{"sdvsdv", 1, 1, 1, evaluate(deck[5:7], deck[0:5])},
+			Player{"vdsvsv", 1, 1, 1, evaluate(deck[7:9], deck[0:5])},
+			Player{"dvsv", 1, 1, 1, evaluate(deck[9:11], deck[0:5])},
+			Player{"dvsv", 1, 1, 1, evaluate(deck[11:13], deck[0:5])},
+			Player{"sdvsv", 1, 1, 1, evaluate(deck[13:15], deck[0:5])},
+			Player{"sdvs", 1, 1, 1, evaluate(deck[15:17], deck[0:5])},
 		},
+		//test data
+		Round:        1,
+		CurrentBuyIn: 1,
+		Pot:          1,
+		MinimumRaise: 1,
+		Dealer:       1,
+		InAction:     1,
+		Seq:          1000,
+		Eor:          1,
 	}
 
 	return &h
