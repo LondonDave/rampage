@@ -7,6 +7,17 @@ import (
 	"math/big"
 )
 
+type Tx struct {
+	H map[int]Hand
+	A map[int]Account
+}
+
+type Account struct {
+	Name       string
+	SmallBlind int
+	Stack      int
+}
+
 //Hand holds state data for a poker hand
 type Hand struct {
 	ID           int

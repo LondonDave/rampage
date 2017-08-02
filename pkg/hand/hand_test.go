@@ -50,17 +50,11 @@ func TestEvaluate(t *testing.T) {
 	}
 }
 
-// func TestNew(t *testing.T) {
-// h := *NewHand(1234, 1)
-// fmt.Println(h)
-// fmt.Println(h.player[0].Mask)
-// }
-
 func TestPersistence(t *testing.T) {
-	h := make(map[int]Hand)
 
-	for i := 1000; i < 1010; i++ {
-		h[i] = *NewHand(i, 1)
+	type Msg struct {
+		HandID int
+		Seq    int
 	}
 
 	file, err := os.Create("filetest_1")
@@ -68,46 +62,111 @@ func TestPersistence(t *testing.T) {
 		panic(err)
 	}
 	encoder := gob.NewEncoder(file)
-	encoder.Encode(h)
-
-	hu := h[1001]
-	hu.Seq++
-	hu.Player[0].Name = "Dave"
-	h[1001] = hu
-
-	update := make(map[int]Hand)
-	update[1001] = hu
-	encoder.Encode(update)
+	encoder.Encode(Msg{1000, 1})
+	encoder.Encode(Msg{1001, 1})
+	encoder.Encode(Msg{1000, 2})
+	encoder.Encode(Msg{999, 2})
 
 	file.Close()
 
-	file, err = os.Open("filetest_1")
+	file, err = os.Open("filetest_0")
+
 	if err != nil {
 		panic(err)
 	}
 
-	var decodedMap map[int]Hand
+	receiver := new(Msg)
+	decodedMap := make(map[int]Msg)
+	decodedMap[999] = Msg{999, 1}
+
 	decoder := gob.NewDecoder(file)
 
 	for {
-		err = decoder.Decode(&decodedMap)
+		time.Sleep(1000 * time.Millisecond)
+		fmt.Printf("%v\n", decodedMap)
+		err = decoder.Decode(receiver)
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
+			fmt.Printf("%v\n", decodedMap)
 			panic(err)
 		}
-	}
-	file.Close()
-	for index := 1000; index < 1010; index++ {
+		m := Msg{}
+		m.HandID = (*receiver).HandID
+		m.Seq = (*receiver).Seq
+		(*receiver).HandID = 0
+		(*receiver).Seq = 0
+		decodedMap[m.HandID] = m
 
-		if h[index].Player[0].Name != decodedMap[index].Player[0].Name {
-			t.Errorf("Name %s\t%s", h[index].Player[0].Name, decodedMap[index].Player[0].Name)
-		}
-		if h[index].Seq != decodedMap[index].Seq {
-			t.Errorf("Seq %v\t%v", h[index].Seq, decodedMap[index].Seq)
-		}
 	}
+	// func TestPersistence(t *testing.T) {
+	//
+	// 	h := make(map[int]Hand)
+	//
+	// 	for i := 1000; i < 1002; i++ {
+	// 		h[i] = *NewHand(i, 1)
+	// 	}
+	//
+	// 	file, err := os.Create("filetest_1")
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
+	// 	encoder := gob.NewEncoder(file)
+	// 	encoder.Encode(h)
+	//
+	// 	hu := h[1000]
+	// 	hu.Seq++
+	// 	hu.Player[0].Name = "Dave"
+	// 	h[1000] = hu
+	//
+	// 	update := make(map[int]Hand)
+	// 	update[1000] = hu
+	// 	encoder.Encode(update)
+	//
+	// 	file.Close()
+	//
+	// 	file, err = os.Open("filetest_0")
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
+	//
+	// 	receiver := make(map[int]Hand)
+	// 	decodedMap := make(map[int]Hand)
+	//
+	// 	decoder := gob.NewDecoder(file)
+	//
+	// 	for {
+	// 		err = decoder.Decode(&receiver)
+	// 		if err == io.EOF {
+	// 			break
+	// 		}
+	// 		if err != nil {
+	// 			fmt.Printf("%v\n", h)
+	// 			fmt.Printf("%v\n", receiver)
+	// 			fmt.Printf("%v\n", decodedMap)
+	// 			panic(err)
+	// 		}
+	// 		for k, v := range receiver {
+	// 			decodedMap[k] = v
+	// 			delete(receiver, k)
+	// 		}
+	// 	}
+
+	file.Close()
+
+	fmt.Printf("%v\n", *receiver)
+	fmt.Printf("%v\n", decodedMap)
+
+	// for index := 1000; index < 1010; index++ {
+	//
+	// 	if h[index].Player[0].Name != decodedMap[index].hptr.Player[0].Name {
+	// 		t.Errorf("Name %s\t%s", h[index].Player[0].Name, decodedMap[index].hptr.Player[0].Name)
+	// 	}
+	// 		if h[index].Seq != decodedMap[index].Seq {
+	// 			t.Errorf("Seq %v\t%v", h[index].Seq, decodedMap[index].Seq)
+	// 		}
+	// }
 }
 
 func TestPersistenceTiming(t *testing.T) {
