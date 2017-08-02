@@ -1,0 +1,17 @@
+// seat({position:1, name:"BigPete", stake:50}, end);
+// button({position:4}, end);
+// action({position:1, action:"blind", amount:2, stake:48, pot:[22,10], allin:[null, null, null, 0,2]}, end);
+// deal({card1:"Ac", card2:"Td"}, end)
+// show( [{position:1, card1:"Ac", card2:"Td"},{position:2, card1:"7s", card2:"Jh"} ], end)
+// instruction({position:1, atc:5, bl:5, lfb:2, lb:true, stake:42, duration:2000}, end)
+// flop(["Jh","Ks","4d"], end)
+// turn("Qd", end)
+// river("10h", end)
+// adjust({position:4, stake:42, pot:[60,50,40]}, end)
+// payoff({pot:[2, 3], winner:[{ position:1 , amount: 20, stake:54, cards: "01"},
+//                             { position:6 , amount: 20, stake:54, cards: "10"}], board:"10001"}, end)
+// restart( [{seat:{position:1, name:"BigPete", stake:50}}], end)
+// lobby({chips:50, level:1, ingame:true});
+// lobby({chips:0});
+// lobby({chips:55, level:2, ingame:true});
+// start

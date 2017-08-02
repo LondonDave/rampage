@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<!-- <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, width=device-width"> -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="viewport" content="initial-scale=2.133, minimum-scale=2.133, maximum-scale=2.133">
+<!-- <meta name="viewport" content="width=device-width"> -->
+<script type="text/javascript" data-main="table" src="require.js"></script>
+<style type="text/css">
+@CHARSET "UTF-8";
+
+/* ----------------------------Table---------------------------- */
+body{ background-color: DarkGreen;}
+#login{ visibility:hidden;}
+#table{ visibility:hidden;}
+#buyin{ visibility:hidden;}
+#buyin button{
+	position:absolute;
+	top:80px;
+	left:45px;
+	font-size:40px;
+	font-weight: bold;
+	width:auto;
+	height:auto;
+	padding: 20px;
+	margin: 20px;
+	-webkit-border-radius: 30px; -moz-border-radius: 30px;  -khtml-border-radius: 30px;  border-radius: 30px;
+}
+#play{ visibility:hidden;}
+#play button{
+	position:absolute;
+	top:160px;
+	left:145px;
+	font-size:40px;
+	font-weight: bold;
+	width:auto;
+	height:auto;
+	padding: 20px;
+	margin: 20px;
+	-webkit-border-radius: 30px; -moz-border-radius: 30px;  -khtml-border-radius: 30px;  border-radius: 30px;
+}
+#play p{font-size:30px; font-weight:bold; font-family:Arial; text-align:center;}
+#bankordouble{ visibility:hidden;}
+#bankordouble button{
+	font-size:35px;
+	width:auto;
+	height:auto;
+	padding: 20px;
+	margin: 20px;
+	-webkit-border-radius: 30px; -moz-border-radius: 30px;  -khtml-border-radius: 30px;  border-radius: 30px;
+}
+#bankordouble div{margin-left:45px;}
+#bankordouble p{font-size:30px; font-weight:bold; font-family:Arial; text-align:center;}
+.table {
+	position: fixed;
+	top:0;
+	left:0;
+	background-color: DarkGreen;
+	width: 480px;
+	height: 300px;
+/*  	-webkit-transform-origin: left top; */
+/*     -webkit-transform: scale(1.5,1.5); */
+}
+
+.table p{color:white;}
+
+/* ----------------------------Chips---------------------------- */
+
+
+
+.action 			{ position: absolute; 	z-index: 1; }
+.action.top 		{ top: 70px; }
+.action.bottom		{ top: 215px; }
+.action.left		{ left: 100px; }
+.action.middle		{ left: 225px; }
+.action.right 		{ left: 350px; }
+.action.move2 	{ 	-webkit-transition-property: left,top;
+					-webkit-transition-duration: 0.8s;
+					-webkit-transition-timing-function: linear;
+}
+.action.move 	{ 	-webkit-transition-property: left,top;
+					-webkit-transition-duration: 0.5s;
+					-webkit-transition-timing-function: linear;
+}
+.action.gather  {
+					position:absolute;
+					left: 165px;
+					top: 175px;
+}
+
+
+.chip {
+	position: absolute;
+	top: 1px;
+	left: 1px;
+	height: 8px;
+	width: 8px;
+	-webkit-box-shadow: 2px 1px 2px #333333;
+	background-color: darkslategrey;
+	border-style: dotted;
+	border-radius: 10px;
+	border-width: 5px;
+	border-color: White;
+	font-family:"Arial";
+	font-size: 10px;
+	font-weight: bold;
+	text-align: center;
+	padding: 1px;
+	-webkit-transform: rotateX(45deg);
+	visibility: hidden;
+}
+
+.centre {
+	position: absolute;
+	background-color: inherit;
+	top: -2.5px;
+	left: -2.5px;
+	height: 14px;
+	width: 14px;
+	border-radius: 10px;
+}
+
+.amount {
+	position: absolute;
+	height: 16px;
+	color: White;
+	font-size: 12px;
+	font-weight: bold;
+	font-family: ariel,sans-serif;
+	padding: 3px;
+	padding-left: 30px;
+}
+
+.amount.shade { opacity: 0.5;}
+
+.chip.raise {background-color: red;}
+/* .chip.win   {background-color: orange;} */
+/* .chip.blind {background-color: darkslategrey;}   */
+/* .chip.call {background-color: darkslategrey;} */
+/* .chip.check { background-color: darkslategrey;} */
+/* .chip.fold { background-color: darkgreen;}    */
+.chip.bet  { background-color: red;}
+/* .chip.pot  { background-color: darkslategrey;} */
+
+
+#pot  		{ position: absolute; top: 180px; left: 160px; visibility: visible }
+#pot .chip1 { top: 8px; left: 6px }
+#pot .chip2 { top: 10px; left: -4px }
+#pot .chip3 { top: 1px; left: 1px }
+#pot .main  { left: 5px }
+#pot .side1 { left: 40px }
+#pot .side2 { left: 75px }
+#pot .side3 { left: 110px }
+
+/* ----------------------------Timer---------------------------- */
+
+.timer {
+	position: absolute;
+/*     top: 0px; */
+/*     left: 0px; */
+	height: 20px;
+	width: 20px;
+}
+.timer.top 		{ top: 70px; }
+.timer.bottom		{ top: 215px; }
+.timer.left		{ left: 100px; }
+.timer.middle		{ left: 225px; }
+.timer.right 		{ left: 350px; }
+.clock {
+	position: absolute;
+	top: 0px;
+	left: -25px;
+	height: 20px;
+	width: 20px;
+	-webkit-box-shadow: 2px 1px 2px #333333;
+	background-color: white;
+	border-style: solid;
+	border-radius: 10px;
+	border-width: 0px;
+	visibility: hidden;
+}
+.face {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height: 18px;
+	width: 18px;
+	border-style: solid;
+	border-radius: 10px;
+	border-width: 1px;
+}
+.face.black { background-color: black;}
+.face.white { background-color: white;}
+.face.right{ clip:rect(0px,20px,20px,10px);}
+.face.left { clip:rect(0px,10px,20px,0px);}
+.cross {
+	 position: absolute;
+	 top: 0px;
+/*      left: -25px; */
+	 left: 0px;
+	height: 20px;
+	width: 20px;
+	color: white;
+	font-family:"Arial";
+	font-size: 20px;
+	font-weight: bold;
+	text-align: center;
+	visibility:hidden;
+}
+.tick {
+	 position: absolute;
+	 top: 0px;
+/*      left: -25px; */
+	 left: 0px;
+	height: 20px;
+	width: 20px;
+	color: white;
+	font-family:"Arial";
+	font-size: 20px;
+	font-weight: bold;
+	text-align: center;
+	visibility:hidden;
+}
+
+/* ----------------------------Cards---------------------------- */
+
+
+.card {
+	position: absolute;
+	top: 150px;
+	left: 150px;
+	background-color: Crimson;
+	border-style: solid;
+	border-width: 2px;
+	border-color: White;
+	border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;
+	width: 31px;
+	height: 46px;
+	visibility: hidden;
+	-webkit-box-shadow: 2px 1px 2px #333333;
+}
+.card.vanish {
+	-webkit-transition-property:   background-color border-color;
+	-webkit-transition-duration: 1.5s;
+	background-color: DarkGreen;
+	border-color: DarkGreen;
+	-webkit-box-shadow: 0px 0px;
+}
+.card.show {
+	width: 35px;
+	height: 50px;
+	font-family:"Arial";
+	border: Black solid thin;
+	background-color: White;
+}
+.rank{ position: absolute; left: 3px; top: 0; font-size: 20px; font-weight: bold; letter-spacing: -3px}
+.spade .suit{position: absolute; left: 10px; top: 6px; font-size: 40px; font-weight: bold;  color: Black;}
+.diamond .suit{position: absolute; left: 14px; top: 7px; font-size: 40px; font-weight: bold;   color: Blue;}
+.club .suit{position: absolute; left: 11px; top: 11px; font-size: 35px; font-weight: bold;  color: Green;}
+.heart .suit{position: absolute; left: 12px; top: 12px; font-size: 35px; font-weight: bold;   color: Red;}
+.spade .rank{color: Black;}
+.club .rank{color: Green;}
+.heart .rank{color: Red;}
+.diamond .rank {color: Blue;}
+
+
+
+.card1.deal.top 	{top: 10px;}
+.card2.deal.top 	{top: 15px;}
+.card1.deal.bottom 	{top: 240px;}
+.card2.deal.bottom 	{top: 245px;}
+.card1.deal.left 	{left: 95px;}
+.card2.deal.left	{left: 107px;}
+.card1.deal.middle	{left: 215px;}
+.card2.deal.middle	{left: 227px;}
+.card1.deal.right  	{left: 345px;}
+.card2.deal.right  	{left: 357px;}
+
+.card1.show.top	{top: 5px;}
+.card2.show.top  	{top: 5px;}
+.card1.show.bottom	{top: 235px;}
+.card2.show.bottom	{top: 235px;}
+.card1.show.left	{left: 85px;}
+.card2.show.left 	{left: 120px;}
+.card1.show.middle 	{left: 203px;}
+.card2.show.middle 	{left: 240px;}
+.card1.show.right 	{left: 335px;}
+.card2.show.right 	{left: 370px;}
+
+
+.card.move {
+	-webkit-transition-property: left,top;
+	-webkit-transition-duration: 0.15s;
+	-webkit-transition-timing-function: linear;
+}
+
+.card.shade { opacity: 0.5;}
+.card.shade:not(.show) {
+	background-color: #6E3C1E;
+	border-color: #7FB17F;
+	opacity: 1;
+}
+#board {
+	visibility: visible;
+	position: absolute;
+	top: 120px;
+	left: 120px;
+}
+#board .card { position:absolute; top:0; }
+#board .flop1	{left: 0;}
+#board .flop2 	{left: 45px;}
+#board .flop3 	{left: 90px;}
+#board .turn 	{left: 135px;}
+#board .river 	{left: 180px;}
+
+/* ----------------------------Seats---------------------------- */
+
+.seat.top {top: 50px;}
+.seat.bottom {top: 280px;}
+.seat.left {left:70px}
+.seat.middle{left:195px}
+.seat.right{left:320px}
+
+.seat{
+	position: absolute;
+	visibility: hidden;
+	background-color: lightyellow;
+	opacity: 0.9;
+	border-style: solid;
+	border-width: 1px;
+	border-color: White;
+	border-radius: 5px;
+	width: 90px;
+	height: 17px;
+	z-index: 20;
+}
+.stake {
+	float: right;
+	font-size: 12px;
+	font-weight: bold;
+	font-family: ariel,sans-serif;
+/* 	margin-left: 1px; */
+/* 	margin-right: 1px; */
+	padding: 1px;
+}
+.name {
+	float: left;
+	font-size: 11px;
+	font-weight: bold;
+	font-family: ariel,sans-serif;
+	padding: 1px;
+}
+.dealer {
+	position: absolute;
+	height: 15px;
+	width: 15px;
+	left: -17px;
+	-webkit-box-shadow: 2px 1px 2px #333333;
+	background-color: Black;
+	border-style: solid;
+	border-radius: 10px;
+	border-width: 1px;
+	border-color: Black;
+	font-family:"Arial";
+	font-size: 12px;
+	font-weight: bold;
+	font-style: italic;
+	text-align: center;
+	color: White;
+	-webkit-transform: rotateX(45deg);
+	visibility: hidden;
+}
+/*  ---------------------------------------------------Controls-------------------------------------------- */
+
+
+#control1 {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height: 320px;
+	width: 64px;
+}
+#control2 {
+	position: absolute;
+	top: 0px;
+	left: 416px;
+	height: 320px;
+	width: 64px;
+}
+button {
+	color: white;
+	height: 63px;
+	width: 63px;
+	font-weight: bold;
+	-webkit-border-radius: 15px; -moz-border-radius: 15px;  -khtml-border-radius: 15px;  border-radius: 15px;
+	padding: 2px;
+	background-color: #000010 ;
+	-webkit-box-shadow: 5px 5px 10px DarkGrey inset;
+}
+#control1 button {
+	height: 25%;
+}
+#control2 button {
+	height: 25%;
+}
+
+</style>
+<title>Poker Rampage Table</title>
+</head>
+<body>
+	<div id="login" class="table">
+<!--     	<fb:login-button perms="publish_actions" show-faces="true"></fb:login-button> -->
+	</div>
+	<div id="buyin" class="table">
+		<button>BUY IN £5 + 50p</button>
+	</div>
+	<div id="play" class="table">
+		<p></p>
+		<button>PLAY</button>
+	</div>
+	</div>
+	<div id="bankordouble" class="table">
+		<p></p>
+		<div>
+			<button id="bank">BANK</button>
+			<button id="double">DOUBLE</button>
+		</div>
+	</div>
+	<div id="table" class="table">
+
+		<div id="pot">
+			<div class="chip chip1">
+				<div class="centre"></div>
+			</div>
+			<div class="chip chip2">
+				<div class="centre"></div>
+			</div>
+			<div class="chip chip3">
+				<div class="centre"></div>
+			</div>
+			<div class="amount main"></div>
+			<div class="amount side1"></div>
+			<div class="amount side2"></div>
+			<div class="amount side3"></div>
+		</div>
+
+		<div class="seat bottom middle">
+			<div class="name"></div>
+			<div class="stake"></div>
+			<div class="dealer">D</div>
+			<div class="countdown"></div>
+		</div>
+		<div class="card card1 bottom middle">
+			<div class="rank"></div>
+			<div class="suit"></div>
+		</div>
+		<div class="card card2 bottom middle">
+			<div class="rank"></div>
+			<div class="suit"></div>
+		</div>
+		<div class="action bottom middle">
+			<div class="chip">
+				<div class="centre"></div>
+			</div>
+			<div class="amount"></div>
+			<div class="tick">&#x2714;</div>
+			<div class="cross">&#x2718;</div>
+		</div>
+		<div class="timer bottom middle">
+			<div class="clock">
+				<div class="face right black">	</div>
+				<div class="face right white">	</div>
+				<div class="face left black">	</div>
+				<div class="face left white">	</div>
+			</div>
+			<div class="tick">&#x2714;</div>
+			<div class="cross">&#x2718;</div>
+		</div>
+
+
+		<div class="seat bottom left">
+			<div class="name"></div>
+			<div class="stake"></div>
+			<div class="dealer">D</div>
+			<div class="countdown"></div>
+		</div>
+		<div class="card card1 bottom left">
+			<div class="rank"></div>
+			<div class="suit"></div>
+		</div>
+		<div class="card card2 bottom left">
+			<div class="rank"></div>
+			<div class="suit"></div>
+		</div>
+		<div class="action bottom left">
+			<div class="chip">
+				<div class="centre"></div>
+			</div>
+			<div class="amount"></div>
+			<div class="tick">&#x2714;</div>
+			<div class="cross">&#x2718;</div>
+		</div>
+		<div class="timer bottom left">
+			<div class="clock">
+				<div class="face right black">	</div>
+				<div class="face right white">	</div>
+				<div class="face left black">	</div>
+				<div class="face left white">	</div>
+			</div>
+			<div class="tick">&#x2714;</div>
+			<div class="cross">&#x2718;</div>
+		</div>
+
+		<div class="seat top left">
+			<div class="name"></div>
+			<div class="stake"></div>
+			<div class="dealer">D</div>
+			<div class="countdown"></div>
+		</div>
+		<div class="card card1 top left">
+			<div class="rank"></div>
+			<div class="suit"></div>
+		</div>
+		<div class="card card2 top left">
+			<div class="rank"></div>
+			<div class="suit"></div>
+		</div>
+		<div class="action top left">
+			<div class="chip">
+				<div class="centre"></div>
+			</div>
+			<div class="amount"></div>
+			<div class="tick">&#x2714;</div>
+			<div class="cross">&#x2718;</div>
+		</div>
+		<div class="timer top left">
+			<div class="clock">
+				<div class="face right black">	</div>
+				<div class="face right white">	</div>
+				<div class="face left black">	</div>
+				<div class="face left white">	</div>
+			</div>
+			<div class="tick">&#x2714;</div>
+			<div class="cross">&#x2718;</div>
+		</div>
+
+		<div class="seat top middle">
+			<div class="name"></div>
+			<div class="stake"></div>
+			<div class="dealer">D</div>
+		</div>
+		<div class="card card1 top middle">
+			<div class="rank"></div>
+			<div class="suit"></div>
+		</div>
+		<div class="card card2 top middle">
+			<div class="rank"></div>
+			<div class="suit"></div>
+		</div>
+		<div class="action top middle">
+			<div class="chip">
+				<div class="centre"></div>
+			</div>
+			<div class="amount"></div>
+			<div class="tick">&#x2714;</div>
+			<div class="cross">&#x2718;</div>
+		</div>
+		<div class="timer top middle">
+			<div class="clock">
+				<div class="face right black">	</div>
+				<div class="face right white">	</div>
+				<div class="face left black">	</div>
+				<div class="face left white">	</div>
+			</div>
+			<div class="tick">&#x2714;</div>
+			<div class="cross">&#x2718;</div>
+		</div>
+
+		<div class="seat top right">
+			<div class="name"></div>
+			<div class="stake"></div>
+			<div class="dealer">D</div>
+		</div>
+		<div class="card card1 top right">
+			<div class="rank"></div>
+			<div class="suit"></div>
+		</div>
+		<div class="card card2 top right">
+			<div class="rank"></div>
+			<div class="suit"></div>
+		</div>
+		<div class="action top right">
+			<div class="chip">
+				<div class="centre"></div>
+			</div>
+			<div class="amount"></div>
+			<div class="tick">&#x2714;</div>
+			<div class="cross">&#x2718;</div>
+		</div>
+		<div class="timer top right">
+			<div class="clock">
+				<div class="face right black">	</div>
+				<div class="face right white">	</div>
+				<div class="face left black">	</div>
+				<div class="face left white">	</div>
+			</div>
+			<div class="tick">&#x2714;</div>
+			<div class="cross">&#x2718;</div>
+		</div>
+
+		<div class="seat bottom right">
+			<div class="name"></div>
+			<div class="stake"></div>
+			<div class="dealer">D</div>
+		</div>
+		<div class="card card1 bottom right">
+			<div class="rank"></div>
+			<div class="suit"></div>
+		</div>
+		<div class="card card2 bottom right">
+			<div class="rank"></div>
+			<div class="suit"></div>
+		</div>
+		<div class="action bottom right">
+			<div class="chip">
+				<div class="centre"></div>
+			</div>
+			<div class="amount"></div>
+			<div class="tick">&#x2714;</div>
+			<div class="cross">&#x2718;</div>
+		</div>
+		<div class="timer bottom right">
+			<div class="clock">
+				<div class="face right black">	</div>
+				<div class="face right white">	</div>
+				<div class="face left black">	</div>
+				<div class="face left white">	</div>
+			</div>
+			<div class="tick">&#x2714;</div>
+			<div class="cross">&#x2718;</div>
+		</div>
+
+		<div id="board">
+			<div class="card show flop1">
+				<div class="rank"></div>
+				<div class="suit"></div>
+			</div>
+			<div class="card show flop2">
+				<div class="rank"></div>
+				<div class="suit"></div>
+			</div>
+			<div class="card show flop3">
+				<div class="rank"></div>
+				<div class="suit"></div>
+			</div>
+			<div class="card show turn">
+				<div class="rank"></div>
+				<div class="suit"></div>
+			</div>
+			<div class="card show river">
+				<div class="rank"></div>
+				<div class="suit"></div>
+			</div>
+		</div>
+
+		<div id="control1">
+			<button>+25</button>
+			<button>+5</button>
+			<button>+1</button>
+			<button>Clear</button>
+		</div>
+
+		<div id="control2">
+			<button id="raise"></button>
+			<button id="call"></button>
+			<button id="fold"></button>
+			<button id="sitout"></button>
+		</div>
+
+	</div>
+</body>
+</html>
